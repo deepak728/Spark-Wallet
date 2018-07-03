@@ -1,7 +1,7 @@
 package com.api.DTO.response;
 
 
-import com.DO.SparkEntity;
+import com.DO.spark_entity;
 
 import java.io.Serializable;
 
@@ -13,6 +13,10 @@ public class DTO2 implements Serializable {
     private String userName;
     private String email;
     private float wallet;
+
+    public DTO2() {
+
+    }
 
     public String getph(){
         return ph;
@@ -53,11 +57,11 @@ public class DTO2 implements Serializable {
     }
 
 
-   public DTO2(SparkEntity se){
+   public DTO2(spark_entity se){
         this.ph=se.getPhone();
         this.firstName=se.getFirstName();
         this.lastName=se.getLastName();
-        this.userName=se.getuserName();
+        this.userName=se.getUserName();
         this.email=se.getEmail();
         this.wallet=se.getWallet();
    }

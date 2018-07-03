@@ -2,7 +2,7 @@ package com.DAO;
 
 
 import com.DO.BankEntity;
-import com.DO.SparkEntity;
+import com.DO.spark_entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,6 +25,7 @@ public class SparkTransImpl implements  SparkTrans{
     SparkDAO sparkDAO;
     @Override
     public BankEntity getBankDetail(String ph) {
+
         String sql ="select id from User where phone=?";
         int id=template.queryForObject(sql,new Object[]{ph},Integer.class);
         String sql2="select * from UserAccount where id=?";
@@ -49,7 +50,7 @@ public class SparkTransImpl implements  SparkTrans{
         template.update(sql,param,type);
         template.update(sql2,param2,type2);
 
-        SparkEntity se =sparkDAO.getUserDetails(ph);
+        spark_entity se =sparkDAO.getUserDetails(ph);
         return se.getWallet();
     }
 }

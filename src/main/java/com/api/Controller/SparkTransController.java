@@ -16,14 +16,14 @@ public class SparkTransController {
      @Autowired(required = true)
     private  SparkTransService sparkTransService;
 
-     @RequestMapping(value = "/addMoney/{ph}",method = RequestMethod.POST,consumes ={MediaType.APPLICATION_JSON_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
-    public DTO3 addMoney(@RequestBody DTO3 dto3, @PathVariable("ph") String ph){
-         DTO3 updatedBalance=sparkTransService.addMoney(ph,dto3.getAmount());
+     @RequestMapping(value = "/addMoney",method = RequestMethod.POST,consumes ={MediaType.APPLICATION_JSON_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
+    public DTO3 addMoney(@RequestBody DTO3 dto3, @RequestHeader  String token){
+         DTO3 updatedBalance=sparkTransService.addMoney(token,dto3.getAmount());
          return updatedBalance;
      }
-     @RequestMapping(value = "/sendMoney/{ph}",method = RequestMethod.POST,consumes = {MediaType.APPLICATION_JSON_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
-       public DTO5 sendMoney(@RequestBody DTO4 dto4, @PathVariable("ph") String ph){
-         DTO5 updatedBalance=sparkTransService.sendMoney(ph,dto4);
+     @RequestMapping(value = "/sendMoney",method = RequestMethod.POST,consumes = {MediaType.APPLICATION_JSON_VALUE},produces = {MediaType.APPLICATION_JSON_VALUE})
+       public DTO5 sendMoney(@RequestBody DTO4 dto4, @RequestHeader  String token){
+         DTO5 updatedBalance=sparkTransService.sendMoney(token,dto4);
          return updatedBalance;
      }
 

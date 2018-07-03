@@ -1,22 +1,21 @@
 package com.DAO;
 
 import com.DO.BankEntity;
-import com.DO.SparkEntity;
+import com.DO.LoginDO;
 import com.DO.SparkEntity2;
-import com.api.DTO.request.DTO1;
+import com.DO.spark_entity;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Statement;
+import java.sql.Date;
 import java.sql.Types;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import java.util.Random;
 
 
 @Repository
@@ -31,21 +30,86 @@ public class SparkDAOImpl implements SparkDAO{
 
 
     @Override
-    public SparkEntity getUserDetails(String ph) {
-           String sql="select id from User where phone=?";
-           SparkEntity se=template.queryForObject(sql,new Object[]{ph},new BeanPropertyRowMapper<SparkEntity>(SparkEntity.class ));
-           System.out.println(se.getUserId());
+    public spark_entity getUserDetails(String ph) {
+           String sql="select * from User where phone=?";
+        spark_entity se=template.queryForObject(sql,new Object[]{ph},new BeanPropertyRowMapper<spark_entity>(spark_entity.class));
+
            return se;
     }
     @Override
     public int getUserId(String ph) {
-        String sql="select id from User where phone=?";
-        int id=template.queryForObject(sql,new Object[]{ph},Integer.class);
+           String sql="select id from User where phone=?";
+           int id=template.queryForObject(sql,new Object[]{ph},Integer.class);
+           return id;
+
+
+
+    }
+
+    @Override
+    public String getPass(String ph) {
+        String sql="select password from User where phone=?";
+        String pass=template.queryForObject(sql,new Object[]{ph},String.class);
+        return  pass;
+    }
+    @Override
+    public String getAccessKey(String ph){
+       String sql ="select accessKey from User where phone=?";
+       String accessKey=template.queryForObject(sql,new Object[]{ph},String.class);
+       return accessKey;
+    }
+
+    @Override
+    public String login(LoginDO loginDO) {
+        int id =loginDO.getId();
+
+        String sql =
+                "update User SET token=?,expire_time=?, accessKey=? where id="+id;
+
+        String accessKey=loginDO.getAccessKey();
+        String token=loginDO.getToken();
+        Date expire_time=loginDO.getExpire_time();
+        Object[] params = new Object[]{
+               token,expire_time,accessKey
+        };
+        int[] types = new int[]{
+                Types.VARCHAR,
+                Types.DATE,
+                Types.VARCHAR
+
+        };
+        System.out.println("Inserting token");
+        template.update(sql, params, types);
+         String sql2="select token from User where id=?";
+         System.out.println("getting token");
+        String return_token=template.queryForObject(sql2,new Object[]{id},String.class);
+        System.out.println(return_token);
+        return return_token;
+    }
+
+    @Override
+    public int getUserFromToken(String token) {
+        String sql ="select id from User where token=?";
+        int id=template.queryForObject(sql,new Object[]{token},Integer.class);
         return id;
     }
 
     @Override
-    public SparkEntity addUser (SparkEntity2 se2) {
+    public String getPhoneFromId(int id) {
+        String sql="select phone from User where id=?";
+        String ph=template.queryForObject(sql,new Object[]{id},String.class);
+        return ph;
+    }
+
+    @Override
+    public java.sql.Date getUserExpiry(int id) {
+          String sql ="select expire_time from User where id =?";
+          Date date=template.queryForObject(sql,new Object[]{id},Date.class);
+          return date;
+     }
+
+    @Override
+    public spark_entity addUser (SparkEntity2 se2) {
          String ph=se2.getPhone();
         String sql2="select id from User where phone=?";
         int rows=-1;
@@ -67,8 +131,10 @@ public class SparkDAOImpl implements SparkDAO{
                             " email," +
                             "phone," +
                             "password," +
-                            "    wallet) " +
-                            "VALUES ( ?, ?, ?, ?,?,?,?)";
+                            "    wallet ," +
+                            "acessKey) " +
+                            "VALUES ( ?, ?, ?, ?,?,?,?,?)";
+
             String firstName = se2.getFirstName();
             String lastName = se2.getLastName();
             String userName = se2.getUserName();
@@ -76,13 +142,16 @@ public class SparkDAOImpl implements SparkDAO{
             String phone = se2.getPhone();
             String password = se2.getPassword();
             String temp_pass = userName + password;
+
+            String accessKey=randomGenerator(temp_pass);
+
             try {
                 String sha256_pass = getHashedPassword(temp_pass);
 
             float wallet = 100;
 
             Object[] params = new Object[]{
-                    firstName, lastName, userName, email, phone, sha256_pass, wallet
+                    firstName, lastName, userName, email, phone, sha256_pass, wallet,accessKey
             };
             int[] types = new int[]{
                     Types.VARCHAR,
@@ -91,7 +160,8 @@ public class SparkDAOImpl implements SparkDAO{
                     Types.VARCHAR,
                     Types.VARCHAR,
                     Types.VARCHAR,
-                    Types.FLOAT
+                    Types.FLOAT,
+                    Types.VARCHAR
             };
             int row = template.update(sql, params, types);
 
@@ -115,6 +185,12 @@ public class SparkDAOImpl implements SparkDAO{
             BankEntity be = template.queryForObject(sql4, new Object[]{id}, new BeanPropertyRowMapper<BankEntity>(BankEntity.class));
             System.out.print(ph + "'s Bank Account Created Account No: " + be.getBankAccount() + " Current Bank Balance = " + (int)be.getBalance());
 
+
+
+
+
+
+
             return this.getUserDetails(phone);
                  }
                catch (NoSuchAlgorithmException e) {
@@ -124,6 +200,22 @@ public class SparkDAOImpl implements SparkDAO{
         }
 
 
+    }
+
+    public String randomGenerator(String temp_pass) {
+       String temp=temp_pass+"abcdefghijklmnopqrstuvwxyz";
+        char[] chars = temp.toCharArray();
+        StringBuilder sb = new StringBuilder(20);
+        Random random = new Random();
+        for (int i = 0; i < 20; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        String output = sb.toString();
+        System.out.println(output);
+
+
+       return output;
     }
 
     @Override
@@ -149,7 +241,7 @@ public class SparkDAOImpl implements SparkDAO{
     }
 
     @Override
-    public SparkEntity updateUser(SparkEntity2 se2) {
+    public spark_entity updateUser(SparkEntity2 se2) {
         String ph=se2.getPhone();
         String sql="select id from User where phone=?";
         String sql3="select * from User where phone=?";
@@ -205,7 +297,7 @@ public class SparkDAOImpl implements SparkDAO{
                 };
 
                 template.update(sql2, params2, types2);
-                SparkEntity se = getUserDetails(ph);
+                spark_entity se = getUserDetails(ph);
                 return se;
             }catch (Exception e){
                 e.printStackTrace();
@@ -230,4 +322,7 @@ public class SparkDAOImpl implements SparkDAO{
         }
         return hexString.toString();
     }
+
+
+
 }
