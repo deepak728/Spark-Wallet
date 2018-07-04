@@ -4,10 +4,12 @@ import com.DAO.SparkDAO;
 import com.DAO.SparkTrans;
 import com.DO.BankEntity;
 import com.DO.spark_entity;
+import com.Exception.CustomException;
 import com.api.DTO.request.DTO3;
 import com.api.DTO.request.DTO4;
 import com.api.DTO.response.DTO5;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,11 +23,25 @@ public class SparkTransServiceImpl implements SparkTransService {
 
 
     @Override
-    public DTO3 addMoney(String token, float amount) {
-         String ph =sparkServiceImpl.authenticateUser(token);
-         if(ph!=null){
-             BankEntity be=sparkTrans.getBankDetail(ph);
-             spark_entity se=sparkDAO.getUserDetails(ph);
+    public DTO3 addMoney(String token, float amount) throws CustomException {
+        String ph;
+        try{
+            ph =sparkServiceImpl.authenticateUser(token);
+        } catch (Exception e){
+              throw new CustomException("Please Login Again",HttpStatus.UNAUTHORIZED);
+        }
+
+        BankEntity be;
+        spark_entity se;
+         try{
+              be=sparkTrans.getBankDetail(ph);
+              se=sparkDAO.getUserDetails(ph);
+
+
+         }catch (Exception e ){
+             throw new CustomException("Internal Error",HttpStatus.BAD_REQUEST);
+         }
+
              float bank_money=be.getBalance();
              if(bank_money>=amount&&amount>=0){
                  float newWB=se.getWallet()+amount;
@@ -35,29 +51,38 @@ public class SparkTransServiceImpl implements SparkTransService {
                  DTO3 dto3=new DTO3(updatedWalletBalance);
                  return dto3;
              }else {
-                 System.out.println("Insufficient Balance");
-                 DTO3 dto3=new DTO3(se.getWallet());
-                 return dto3;
+                 System.out.println("Insufficient balanace");
+                 throw new CustomException("Insufficient Balance ",HttpStatus.NOT_ACCEPTABLE);
              }
-         }else{
-             System.out.println("Please login again");
-             return null;
-         }
+
 
 
     }
 
     @Override
-    public DTO5 sendMoney(String token, DTO4 dto4) {
+    public DTO5 sendMoney(String token, DTO4 dto4) throws CustomException{
+        String ph;
+        try{
+            ph=sparkServiceImpl.authenticateUser(token);
+        }catch (Exception e){
+            throw new CustomException("Please Login Again",HttpStatus.UNAUTHORIZED);
+        }
+        spark_entity sender;
+        spark_entity receiver;
+        BankEntity senderBank;
+        BankEntity receiverBank;
+             try{
+                  sender=(sparkDAO.getUserDetails(ph));
+                  receiver=(sparkDAO.getUserDetails(dto4.getReceiverPh()));
+                  senderBank=sparkTrans.getBankDetail(ph);
+                  receiverBank=sparkTrans.getBankDetail(dto4.getReceiverPh());
 
-        String ph=sparkServiceImpl.authenticateUser(token);
-        if(ph!=null){
-            spark_entity sender=(sparkDAO.getUserDetails(ph));
-            spark_entity receiver=(sparkDAO.getUserDetails(dto4.getReceiverPh()));
-            BankEntity senderBank=sparkTrans.getBankDetail(ph);
-            BankEntity receiverBank=sparkTrans.getBankDetail(dto4.getReceiverPh());
+             }catch (Exception e){
+            throw new CustomException("Sender or Receiver does not exist",HttpStatus.BAD_REQUEST);
 
-            if(sender.getId()>0&&receiver.getId()>0){
+             }
+
+           if (sender.getId()>0&&receiver.getId()>0){
 
 
                 float senderBalance=sender.getWallet();
@@ -84,24 +109,17 @@ public class SparkTransServiceImpl implements SparkTransService {
 
 
                     }else {
-                        System.out.println("You don't have sufficient Balance, Please add "+(dto4.getAmount()-senderBank.getBalance())+ " to your bank");
+                        throw new CustomException("You don't have sufficient Balance, Please add "+(dto4.getAmount()-senderBank.getBalance())+ " to your bank",HttpStatus.NOT_ACCEPTABLE);
 
                     }
-                    DTO5 dto5=new DTO5(sparkTrans.updateBalance(ph,senderBank.getBalance(),sender.getWallet()),sparkTrans.updateBalance(dto4.getReceiverPh(),receiverBank.getBalance(),receiver.getWallet()));
-                    return dto5;
+
                 }
 
 
             }else {
-                System.out.print("Sender or Receiver doesn't exist");
-                DTO5 dto5=new DTO5(sparkTrans.updateBalance(ph,senderBank.getBalance(),sender.getWallet()),sparkTrans.updateBalance(dto4.getReceiverPh(),receiverBank.getBalance(),receiver.getWallet()));
-                return dto5;
+                throw new CustomException("Receiver Does not exist ",HttpStatus.UNAUTHORIZED);
             }
 
-        }else{
-            System.out.println("Please Login again ");
-            return null;
-        }
 
 
     }

@@ -6,6 +6,7 @@ public class DTO6 implements Serializable {
     private static final long serialVersionUID =1L;
 
     private String passWord;
+    private String ph;
 
     public String getPh() {
         return ph;
@@ -15,7 +16,6 @@ public class DTO6 implements Serializable {
         this.ph = ph;
     }
 
-    private String ph;
 
 
     public String getPassWord() {

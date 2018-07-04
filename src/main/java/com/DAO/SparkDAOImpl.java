@@ -132,7 +132,7 @@ public class SparkDAOImpl implements SparkDAO{
                             "phone," +
                             "password," +
                             "    wallet ," +
-                            "acessKey) " +
+                            "accessKey) " +
                             "VALUES ( ?, ?, ?, ?,?,?,?,?)";
 
             String firstName = se2.getFirstName();
