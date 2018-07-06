@@ -146,7 +146,13 @@ public class SparkDAOImpl implements SparkDAO{
             String accessKey=randomGenerator(temp_pass);
 
             try {
-                String sha256_pass = getHashedPassword(temp_pass);
+            String sha256_pass = null;
+            try {
+                sha256_pass = getHashedPassword(temp_pass);
+            } catch (NoSuchAlgorithmException e) {
+                System.out.println("exceptoion");
+                e.printStackTrace();
+            }
 
             float wallet = 100;
 
@@ -193,7 +199,7 @@ public class SparkDAOImpl implements SparkDAO{
 
             return this.getUserDetails(phone);
                  }
-               catch (NoSuchAlgorithmException e) {
+               catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }

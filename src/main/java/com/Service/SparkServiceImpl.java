@@ -49,13 +49,13 @@ public class SparkServiceImpl implements SparkService{
     public DTO2 addUser(DTO1 dto1) throws CustomException{
 
           SparkEntity2 se2=new SparkEntity2(dto1);
-          try{
+         try{
               spark_entity se=sparkDAO.addUser(se2);
               DTO2 dto2=new DTO2(se);
               return dto2;
-          }catch (Exception e){
-              throw new CustomException("Failed to add User",HttpStatus.NOT_ACCEPTABLE);
-          }
+        }catch (Exception e){
+            throw new CustomException("Failed to add User",HttpStatus.NOT_ACCEPTABLE);
+        }
 
     }
 
