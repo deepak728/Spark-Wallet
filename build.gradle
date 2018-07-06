@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+}
+
+apply plugin:'jetty'
+
+jettyRun{
+    httpPort=8090
+}
+
+
+group 'spark_wallet'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework:spring-context:4.3.6.RELEASE',
+            'org.springframework:spring-core:4.3.6.RELEASE',
+            'org.springframework:spring-beans:4.3.6.RELEASE',
+            'org.springframework:spring-web:4.3.6.RELEASE',
+            'org.springframework:spring-webmvc:4.3.6.RELEASE',
+            'org.springframework:spring-tx:4.3.6.RELEASE',
+            'org.springframework:spring-jdbc:4.3.6.RELEASE',
+            'org.springframework:spring-orm:4.3.6.RELEASE',
+            'org.springframework:spring-test:4.3.6.RELEASE',
+            'javax.servlet:jstl:1.2',
+            'javax.servlet:javax.servlet-api:3.1.0',
+            'javax.servlet.jsp:javax.servlet.jsp-api:2.3.1',
+            'javax.transaction:jta:1.1',
+            'mysql:mysql-connector-java:5.1.31',
+            'com.fasterxml.jackson.core:jackson-core:2.7.1',
+            'com.fasterxml.jackson.core:jackson-databind:2.7.1',
+            'com.fasterxml.jackson.core:jackson-annotations:2.7.1',
+            'org.eclipse.jetty:jetty-server:9.2.11.v20150529',
+            'org.eclipse.jetty:jetty-servlet:9.2.11.v20150529',
+            'commons-codec:commons-codec:1.10'
+
+    compile group: 'org.crazycake', name: 'jdbctemplatetool', version: '1.0.4-RELEASE'
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
