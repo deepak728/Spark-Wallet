@@ -13,6 +13,9 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
        api url (jetty) : http://localhost:8090/spark_wallet/api/spark/add
         
         Json Request
+	
+	```json
+
        {   
         "firstName":"deepak",
         "lastName":"kumar",
@@ -20,8 +23,9 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
         "phone":"1234567890",
         "email":"dk@gmail.com",
         "password":"dk@908"
-        }
-       
+        
+	   }
+	```
        
 
 2. Update User (POST Api) : It allows User to update their information (except phone no). User will get Json response of User updated details.
@@ -29,6 +33,8 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
        api url (jetty) : http://localhost:8090/spark_wallet/api/spark/update
         
 	    Json Request
+	    
+```json
             {   
         "firstName":"deepak",
         "lastName":"kumar",
@@ -36,17 +42,21 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
         "phone":"1234567890",
        "email":"dkumar@gmail.com",
        "password":"dk@728"
-       }
-
+           }
+```
+	   
 3. Login (POST Api) : User can login to their account using their phone no and password. User will get token in the header as response with expiry time of 24hrs.
 
        api url (jetty) : http://localhost:8090/spark_wallet/api/spark/login
        
         Json Request
+	
+```Json
        { 
         "ph":"1234567890",
        "passWord":"dk@728"
        }
+```
        
 4. Get User Details (GET Api) : User can get all their information using the token provided during login.
 
@@ -61,20 +71,25 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
         api url (jetty) : http://localhost:8090/spark_wallet/api/spark/addMoney
 	
             Json Request
+	   
+```Json
         { 
        "amount":2000
         }
+```
         
  7. Send Money (POST Api) : User can send money from their wallet to another user wallet using token and their phone no .If sufficient amount is not present in user's wallet then required amount will be added to the user's wallet from their bank account. 
  
         api url (jetty) : http://localhost:8090/spark_wallet/api/spark/sendMoney
 	  
           Json Request
+	  
+```Json
          {   
 	          "receiverPh":"0987654321",
 	          "amount":1000
-         }
-         
+          }
+```      
 # Requirements 
 
 Java jdk 8
