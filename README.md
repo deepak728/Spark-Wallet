@@ -27,8 +27,9 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
 2. Update User (POST Api) : It allows User to update their information (except phone no). User will get Json response of User updated details.
        
        api url (jetty) : http://localhost:8090/spark_wallet/api/spark/update
-       
-       {   
+        
+	    Json Request
+            {   
         "firstName":"deepak",
         "lastName":"kumar",
         "userName":"dkumar",
@@ -41,6 +42,7 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
 
        api url (jetty) : http://localhost:8090/spark_wallet/api/spark/login
        
+        Json Request
        { 
         "ph":"1234567890",
        "passWord":"dk@728"
@@ -57,7 +59,8 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
 6. Add Money (POST Api) : User can add  money to their wallet from their corresponding bank account using token. 
       
         api url (jetty) : http://localhost:8090/spark_wallet/api/spark/addMoney
-        
+	
+            Json Request
         { 
        "amount":2000
         }
@@ -65,7 +68,8 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
  7. Send Money (POST Api) : User can send money from their wallet to another user wallet using token and their phone no .If sufficient amount is not present in user's wallet then required amount will be added to the user's wallet from their bank account. 
  
         api url (jetty) : http://localhost:8090/spark_wallet/api/spark/sendMoney
-        
+	  
+          Json Request
          {   
 	          "receiverPh":"0987654321",
 	          "amount":1000
@@ -74,9 +78,13 @@ I have used Intellij IDEA as an editor, all the api is developed using java, xml
 # Requirements 
 
 Java jdk 8
+
 Gradle 3.5 
+
 PostMan
+
 Mysql
+
 Docker(Optional)
 
 
@@ -120,4 +128,4 @@ Docker(Optional)
  
  4. Test api using postman 
  
-             http://localhost:8080/spark_wallet-1.0/api/spark/(.....)
+        http://localhost:8080/spark_wallet-1.0/api/spark/(.....)
